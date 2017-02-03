@@ -1,3 +1,9 @@
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+}
+
+apply plugin: 'maven-publish'
+
 jar {
     baseName 'trove4j'
 }
@@ -21,3 +27,36 @@ sourceSets {
 }
 
 compileJava.dependsOn(generateTemplates)
+
+
+sourceCompatibility = '1.5'
+targetCompatibility = '1.5'
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            groupId 'org.jetbrains.trove4j'
+            artifactId 'trove4j'
+            version '20160824'
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    pkg {
+        repo = 'trove4j'
+        name = 'trove4j'
+        userOrg = 'jetbrains'
+        licenses = ['LGPL-2.1']
+        vcsUrl = 'https://github.com/JetBrains/trove4j'
+
+        version {
+            name = '20160824'
+        }
+    }
+
+    publications = ['MyPublication']
+}
