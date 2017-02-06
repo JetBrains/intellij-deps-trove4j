@@ -8,16 +8,11 @@ jar {
     baseName 'trove4j'
 }
 
-dependencies {
-    compile project(':generator')
-}
-
-task(generateTemplates, type: JavaExec) {
+task(generateTemplates, type: JavaExec, dependsOn: ':generator:compileJava') {
     main = 'gnu.trove.generate.Generate'
     classpath = findProject(':generator').sourceSets.main.runtimeClasspath
     args = [ 'src/main/templates', "${buildDir}/generated-src" ]
     workingDir = getProjectDir()
-
 }
 
 sourceSets {
