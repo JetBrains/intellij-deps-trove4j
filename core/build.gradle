@@ -27,6 +27,14 @@ compileJava.dependsOn(generateTemplates)
 sourceCompatibility = '1.5'
 targetCompatibility = '1.5'
 
+task sourceJar(type: Jar) {
+    from sourceSets.main.java
+}
+
+artifacts {
+    archives sourceJar
+}
+
 publishing {
     publications {
         MyPublication(MavenPublication) {
@@ -34,6 +42,9 @@ publishing {
             groupId 'org.jetbrains.intellij.deps'
             artifactId 'trove4j'
             version '1.0.20160824'
+            artifact sourceJar {
+                classifier "sources"
+            }
         }
     }
 }
