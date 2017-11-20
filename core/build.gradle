@@ -31,7 +31,7 @@ publishing {
     publications {
         MyPublication(MavenPublication) {
             from components.java
-            groupId 'org.jetbrains.intellij.deps.trove4j'
+            groupId 'org.jetbrains.intellij.deps'
             artifactId 'trove4j'
             version '1.0.20160824'
         }
