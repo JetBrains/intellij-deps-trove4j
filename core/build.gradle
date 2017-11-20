@@ -31,9 +31,9 @@ publishing {
     publications {
         MyPublication(MavenPublication) {
             from components.java
-            groupId 'org.jetbrains.trove4j'
+            groupId 'org.jetbrains.intellij.deps.trove4j'
             artifactId 'trove4j'
-            version '20160824'
+            version '1.0.20160824'
         }
     }
 }
@@ -42,14 +42,12 @@ bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
     pkg {
-        repo = 'trove4j'
+        repo = 'intellij-third-party-dependencies'
         name = 'trove4j'
         userOrg = 'jetbrains'
-        licenses = ['LGPL-2.1']
-        vcsUrl = 'https://github.com/JetBrains/trove4j'
 
         version {
-            name = '20160824'
+            name = '1.0.20160824'
         }
     }
 
