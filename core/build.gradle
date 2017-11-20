@@ -17,7 +17,7 @@ task(generateTemplates, type: JavaExec, dependsOn: ':generator:compileJava') {
 
 sourceSets {
     main {
-        java.srcDirs += "${buildDir}/generated-src"
+        java.srcDirs += "${buildDir}/generated-src/src"
     }
 }
 
