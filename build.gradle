@@ -1,3 +1,7 @@
+ext.projectVersion = projectVersion
+
 subprojects {
     apply plugin: 'java'
+    version rootProject.ext.projectVersion
 }
+
