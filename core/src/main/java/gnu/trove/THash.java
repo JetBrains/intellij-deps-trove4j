@@ -146,8 +146,7 @@ public abstract class THash implements Cloneable {
      */
     public void ensureCapacity(int desiredCapacity) {
         if (desiredCapacity > (_maxSize - size())) {
-            rehash(PrimeFinder.nextPrime((int) (desiredCapacity + size() /
-                    _loadFactor) + 2));
+            rehash(PrimeFinder.nextPrime((int) ((desiredCapacity + size()) / _loadFactor) + 2));
             computeMaxSize(capacity());
         }
     }
