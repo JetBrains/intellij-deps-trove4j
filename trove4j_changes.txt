@@ -1,3 +1,6 @@
+Date: 13 May 2019
+   Changes classes: PrimeFinder.java
+     Use already sorted array instead of sorting primes in the class initalizer to avoid exposing not-yet-sorted primes.
 Date: 24 August 2016
    Changed classes:
      T*Hash, T*ObjectMap, TObject*Map, THashMap, T**Map, T*List - made empty collections consume less memory
