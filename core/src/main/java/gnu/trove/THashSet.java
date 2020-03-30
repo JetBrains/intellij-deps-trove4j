@@ -134,6 +134,9 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E> {
      * @return true if the set was modified by the add operation
      */
     public boolean add(E obj) {
+        if (obj == null) {
+            throw new NullPointerException("Null elements are not allowed in THashSet");
+        }
         int index = insertionIndex(obj);
 
         if (index < 0) {
