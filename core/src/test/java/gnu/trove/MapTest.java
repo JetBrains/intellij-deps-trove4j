@@ -12,6 +12,7 @@ public class MapTest {
     public static void main(String[] args) {
         testTIntObjectHashMap();
         testTHashMap();
+        testTHashMapViewsEquality();
         testClone();
     }
 
@@ -352,6 +353,31 @@ public class MapTest {
         assertEquals(6, map._size);
         assertEquals(DEFAULT_LOAD_FACTOR, map._loadFactor);
         assertEquals((int) (map.capacity() * map._loadFactor), map._maxSize);
+    }
+
+    public static void testTHashMapViewsEquality() {
+      THashMap<String, Integer> oneMap = new THashMap<String, Integer>();
+      THashMap<String, Integer> twoMap = new THashMap<String, Integer>();
+
+      for (int i = 0; i < 10; i++) {
+        String oneKey = String.valueOf(i);
+        oneMap.put(oneKey, i);
+
+        String twoKey = String.valueOf(9 - i);
+        twoMap.put(twoKey, 9 - i);
+      }
+
+      assertEquals(oneMap, twoMap);
+      assertEquals(oneMap.hashCode(), twoMap.hashCode());
+
+      assertEquals(oneMap.keySet(), twoMap.keySet());
+      assertEquals(oneMap.keySet().hashCode(), twoMap.keySet().hashCode());
+
+      assertEquals(oneMap.values(), twoMap.values());
+      assertEquals(oneMap.values().hashCode(), twoMap.values().hashCode());
+
+      assertEquals(oneMap.entrySet(), twoMap.entrySet());
+      assertEquals(oneMap.entrySet().hashCode(), twoMap.entrySet().hashCode());
     }
 
     public static void testClone() {

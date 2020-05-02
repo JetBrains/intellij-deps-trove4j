@@ -593,7 +593,7 @@ public class THashMap<K,V> extends TObjectHash<K> implements Map<K,V> {
         }
     }
 
-    private abstract class MapBackedView<E> implements Set<E> {
+    private abstract class MapBackedView<E> extends AbstractSet<E> {
         MapBackedView() {
         }
 
@@ -742,6 +742,32 @@ public class THashMap<K,V> extends TObjectHash<K> implements Map<K,V> {
             val = o;            // update this entry's value, in case
                                 // setValue is called again
             return prev;
+        }
+
+
+        @Override
+        public final boolean equals(Object o) {
+            if (o == this) {
+                return true;
+            }
+            if (o instanceof Map.Entry) {
+                Map.Entry<?, ?> otherEntry = (Map.Entry<?, ?>) o;
+                Object otherKey = otherEntry.getKey();
+                Object otherValue = otherEntry.getValue();
+                //noinspection unchecked
+                if (!(key == otherKey || key != null && _hashingStrategy.equals(key, (K) otherKey))) {
+                    return false;
+                }
+                return val == otherValue || (val != null && val.equals(otherValue));
+            }
+            return false;
+        }
+
+        @Override
+        public final int hashCode() {
+            HashProcedure hashProcedure = new HashProcedure();
+            hashProcedure.execute(key, val);
+            return hashProcedure.getHashCode();
         }
     }
 

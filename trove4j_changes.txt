@@ -1,3 +1,6 @@
+Date: 03 March 2020
+   Changed classes: THashMap.java
+     Add implementations of equals()/hashCode() for views of THashMap: keySet(), values(), entrySet().
 Date: 13 May 2019
    Changes classes: PrimeFinder.java
      Use already sorted array instead of sorting primes in the class initalizer to avoid exposing not-yet-sorted primes.
