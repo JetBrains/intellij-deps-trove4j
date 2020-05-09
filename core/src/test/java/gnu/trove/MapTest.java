@@ -1,8 +1,6 @@
 package gnu.trove;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static gnu.trove.THash.DEFAULT_LOAD_FACTOR;
 import static gnu.trove.TObjectHash.REMOVED;
@@ -12,8 +10,9 @@ public class MapTest {
     public static void main(String[] args) {
         testTIntObjectHashMap();
         testTHashMap();
-        testTHashMapViewsEquality();
+        testMapEquality();
         testClone();
+        System.out.println("All tests have passed");
     }
 
     private static void testTIntObjectHashMap() {
@@ -355,29 +354,135 @@ public class MapTest {
         assertEquals((int) (map.capacity() * map._loadFactor), map._maxSize);
     }
 
-    public static void testTHashMapViewsEquality() {
-      THashMap<String, Integer> oneMap = new THashMap<String, Integer>();
-      THashMap<String, Integer> twoMap = new THashMap<String, Integer>();
+    public static void testMapEquality() {
+        Map<String, Integer> scenario = generateTestScenario();
 
-      for (int i = 0; i < 10; i++) {
-        String oneKey = String.valueOf(i);
-        oneMap.put(oneKey, i);
+        List<Map<String, Integer>> allMaps = Arrays.<Map<String, Integer>>asList(
+            new THashMap<String, Integer>(),
+            new THashMap<String, Integer>(),
+            new HashMap<String, Integer>(),
+            new HashMap<String, Integer>(),
+            new TreeMap<String, Integer>(),
+            new TreeMap<String, Integer>()
+        );
 
-        String twoKey = String.valueOf(9 - i);
-        twoMap.put(twoKey, 9 - i);
-      }
+        for (Map<String, Integer> map : allMaps) {
+            putShuffledScenario(scenario, map);
+        }
 
-      assertEquals(oneMap, twoMap);
-      assertEquals(oneMap.hashCode(), twoMap.hashCode());
+        for (Map<String, Integer> map1 : allMaps) {
+            for (Map<String, Integer> map2 : allMaps) {
+                assertMapsAreEqual(map1, map2);
+            }
+        }
+    }
 
-      assertEquals(oneMap.keySet(), twoMap.keySet());
-      assertEquals(oneMap.keySet().hashCode(), twoMap.keySet().hashCode());
+    private static Map<String, Integer> generateTestScenario() {
+        int numOfValues = 1000;
+        Random random = new Random();
+        Map<String, Integer> scenario = new HashMap<String, Integer>();
+        for (int i = 0; i < numOfValues; i++) {
+            String key = String.valueOf(random.nextInt());
+            int value = random.nextInt();
+            scenario.put(key, value);
+        }
+        return scenario;
+    }
 
-      assertEquals(oneMap.values(), twoMap.values());
-      assertEquals(oneMap.values().hashCode(), twoMap.values().hashCode());
+    private static <K, V> void putShuffledScenario(Map<K, V> scenario, Map<K, V> target) {
+        List<Map.Entry<K, V>> shuffled = new ArrayList<Map.Entry<K, V>>(scenario.entrySet());
+        Collections.shuffle(shuffled);
+        for (Map.Entry<K, V> entry : shuffled) {
+            target.put(entry.getKey(), entry.getValue());
+        }
+    }
 
-      assertEquals(oneMap.entrySet(), twoMap.entrySet());
-      assertEquals(oneMap.entrySet().hashCode(), twoMap.entrySet().hashCode());
+    private static void assertMapsAreEqual(Map<String, Integer> oneMap, Map<String, Integer> twoMap) {
+        assertEquals(oneMap, twoMap);
+        assertEquals(oneMap.size(), twoMap.size());
+        assertEquals(oneMap.hashCode(), twoMap.hashCode());
+
+        assertEquals(oneMap.keySet(), twoMap.keySet());
+        assertEquals(oneMap.keySet().size(), twoMap.keySet().size());
+        assertEquals(oneMap.keySet().hashCode(), twoMap.keySet().hashCode());
+        for (String oneKey : oneMap.keySet()) {
+            assertEquals(true, twoMap.keySet().contains(oneKey));
+        }
+        for (String twoKey : twoMap.keySet()) {
+            assertEquals(true, oneMap.keySet().contains(twoKey));
+        }
+
+        List<Integer> oneValues = new ArrayList<Integer>(oneMap.values());
+        Collections.sort(oneValues);
+        List<Integer> twoValues = new ArrayList<Integer>(twoMap.values());
+        Collections.sort(twoValues);
+        assertEquals(oneValues, twoValues);
+        assertEquals(oneValues.size(), twoValues.size());
+        assertEquals(oneValues.hashCode(), twoValues.hashCode());
+        for (Integer oneValue : oneMap.values()) {
+            assertEquals(true, twoMap.values().contains(oneValue));
+        }
+        for (Integer twoValue : twoMap.values()) {
+            assertEquals(true, oneMap.values().contains(twoValue));
+        }
+
+        assertEquals(oneMap.entrySet(), twoMap.entrySet());
+        assertEquals(oneMap.entrySet().size(), twoMap.entrySet().size());
+        assertEquals(oneMap.entrySet().hashCode(), twoMap.entrySet().hashCode());
+        for (Map.Entry<String, Integer> oneEntry : oneMap.entrySet()) {
+            assertEquals(true, twoMap.entrySet().contains(oneEntry));
+        }
+        for (Map.Entry<String, Integer> twoEntry : twoMap.entrySet()) {
+            assertEquals(true, oneMap.entrySet().contains(twoEntry));
+        }
+
+        Map<String, Integer> oneClone = cloneMap(oneMap);
+        Map<String, Integer> twoClone = cloneMap(twoMap);
+        for (String oneKey : oneMap.keySet()) {
+            twoClone.keySet().remove(oneKey);
+        }
+        for (String twoKey : twoMap.keySet()) {
+            oneClone.keySet().remove(twoKey);
+        }
+        assertEquals(Collections.emptyMap(), oneClone);
+        assertEquals(Collections.emptyMap(), twoClone);
+
+        oneClone = cloneMap(oneMap);
+        twoClone = cloneMap(twoMap);
+        for (Integer oneValue : oneMap.values()) {
+            twoClone.values().remove(oneValue);
+        }
+        for (Integer twoValue : twoMap.values()) {
+            oneClone.values().remove(twoValue);
+        }
+        assertEquals(Collections.emptyMap(), oneClone);
+        assertEquals(Collections.emptyMap(), twoClone);
+
+        oneClone = cloneMap(oneMap);
+        twoClone = cloneMap(twoMap);
+        for (Map.Entry<String, Integer> oneEntry : oneMap.entrySet()) {
+            twoClone.entrySet().remove(oneEntry);
+        }
+        for (Map.Entry<String, Integer> twoEntry : twoMap.entrySet()) {
+            oneClone.entrySet().remove(twoEntry);
+        }
+        assertEquals(Collections.emptyMap(), oneClone);
+        assertEquals(Collections.emptyMap(), twoClone);
+    }
+
+    private static Map<String, Integer> cloneMap(Map<String, Integer> original) {
+        if (original instanceof THashMap) {
+            return ((THashMap<String, Integer>) original).clone();
+        }
+        if (original instanceof HashMap) {
+            //noinspection unchecked
+            return ((Map<String, Integer>) ((HashMap<String, Integer>) original).clone());
+        }
+        if (original instanceof TreeMap) {
+            //noinspection unchecked
+            return (Map<String, Integer>) ((TreeMap<String, Integer>) original).clone();
+        }
+        throw new AssertionError("Unknown map implementation: " + original.getClass().getName());
     }
 
     public static void testClone() {
@@ -402,8 +507,19 @@ public class MapTest {
       assertEquals(set01, keySet);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static void assertEquals(Object expected, Object actual) {
         if (expected == null ? actual != null : !expected.equals(actual)) {
+            if (expected instanceof Collection && actual instanceof Collection) {
+                Set extra = new HashSet(((Collection) actual));
+                extra.removeAll(((Collection) expected));
+
+                Set missing = new HashSet(((Collection) expected));
+                missing.removeAll(((Collection) actual));
+
+                throw new AssertionError("Missing: " + missing + "\n" + "Extra: " + extra);
+            }
+
             throw new AssertionError("Expected: "+expected+"; but got: "+actual);
         }
     }

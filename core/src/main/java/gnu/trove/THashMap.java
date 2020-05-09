@@ -21,7 +21,6 @@ package gnu.trove;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -493,7 +492,7 @@ public class THashMap<K,V> extends TObjectHash<K> implements Map<K,V> {
      * a view onto the values of the map.
      *
      */
-    protected class ValueView extends MapBackedView<V> {
+    protected class ValueView extends AbstractCollection<V> {
         @Override
         public Iterator<V> iterator() {
             return new THashIterator<V>(THashMap.this) {
@@ -504,13 +503,20 @@ public class THashMap<K,V> extends TObjectHash<K> implements Map<K,V> {
             };
         }
 
-        @Override
-        public boolean containsElement(V value) {
-            return containsValue(value);
+        public int size() {
+            return THashMap.this.size();
         }
 
         @Override
-        public boolean removeElement(V value) {
+        public boolean contains(Object o) {
+            return containsValue(o);
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            //noinspection unchecked
+            V value = (V) o;
+
             boolean changed = false;
             Object[] values = _values;
             Object[] set = _set;
@@ -531,7 +537,7 @@ public class THashMap<K,V> extends TObjectHash<K> implements Map<K,V> {
      * a view onto the entries of the map.
      *
      */
-    protected class EntryView extends MapBackedView<Map.Entry<K,V>> {
+    protected class EntryView extends AbstractSet<Map.Entry<K,V>> {
         EntryView() {
         }
 
@@ -552,7 +558,15 @@ public class THashMap<K,V> extends TObjectHash<K> implements Map<K,V> {
         }
 
         @Override
-        public boolean removeElement(Map.Entry<K,V> entry) {
+        public int size() {
+            return THashMap.this.size();
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            //noinspection unchecked
+            Map.Entry<K, V> entry = (Map.Entry<K, V>)o;
+
             // have to effectively reimplement Map.remove here
             // because we need to return true/false depending on
             // whether the removal took place.  Since the Entry's
@@ -577,7 +591,8 @@ public class THashMap<K,V> extends TObjectHash<K> implements Map<K,V> {
         }
 
         @Override
-        public boolean containsElement(Map.Entry<K,V> entry) {
+        public boolean contains(Object o) {
+            Map.Entry<K, V> entry = (Map.Entry<K, V>) o;
             Object val = get(keyForEntry(entry));
             Object entryValue = entry.getValue();
             return entryValue == val ||
@@ -593,108 +608,10 @@ public class THashMap<K,V> extends TObjectHash<K> implements Map<K,V> {
         }
     }
 
-    private abstract class MapBackedView<E> extends AbstractSet<E> {
-        MapBackedView() {
-        }
-
-        public abstract Iterator<E> iterator();
-
-        public abstract boolean removeElement(E key);
-
-        public abstract boolean containsElement(E key);
-
-        public boolean contains(Object key) {
-            return containsElement((E) key);
-        }
-
-        public boolean remove(Object o) {
-            return removeElement((E) o);
-        }
-
-        public boolean containsAll(Collection<?> collection) {
-            for (Object element : collection) {
-                if (!contains(element)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public boolean removeAll(Collection<?> collection) {
-            boolean changed = false;
-            for (Object element : collection) {
-                if (remove(element)) {
-                    changed = true;
-                }
-            }
-            return changed;
-        }
-
-        public void clear() {
-            THashMap.this.clear();
-        }
-
-        public boolean add(E obj) {
-            throw new UnsupportedOperationException();
-        }
-
-        public int size() {
-            return THashMap.this.size();
-        }
-
-        public Object[] toArray() {
-            Object[] result = new Object[size()];
-            Iterator e = iterator();
-            for (int i = 0; e.hasNext(); i++) {
-                result[i] = e.next();
-            }
-            return result;
-        }
-
-        public <T> T[] toArray(T[] a){
-            int size = size();
-            if (a.length < size) {
-                a = (T[]) Array.newInstance(a.getClass().getComponentType(), size);
-            }
-
-            Iterator<E> it = iterator();
-            Object[] result = a;
-            for (int i=0; i<size; i++) {
-                result[i] = it.next();
-            }
-
-            if (a.length > size) {
-                a[size] = null;
-            }
-
-            return a;
-        }
-
-        public boolean isEmpty() {
-            return THashMap.this.isEmpty();
-        }
-
-        public boolean addAll(Collection<? extends E> collection) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean retainAll(Collection<?> collection) {
-            boolean changed = false;
-            Iterator i = iterator();
-            while (i.hasNext()) {
-                if (! collection.contains(i.next())) {
-                    i.remove();
-                    changed = true;
-                }
-            }
-            return changed;
-        }
-    }
-
     /**
      * a view onto the keys of the map.
      */
-    protected class KeyView extends MapBackedView<K> {
+    protected class KeyView extends AbstractSet<K> {
         KeyView() {
         }
 
@@ -703,14 +620,18 @@ public class THashMap<K,V> extends TObjectHash<K> implements Map<K,V> {
             return new TObjectHashIterator<K>(THashMap.this);
         }
 
-        @Override
-        public boolean removeElement(K key) {
-            return null != THashMap.this.remove(key);
+        public int size() {
+            return THashMap.this.size();
         }
 
         @Override
-        public boolean containsElement(K key) {
-            return THashMap.this.contains(key);
+        public boolean remove(Object o) {
+            return null != THashMap.this.remove(o);
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return THashMap.this.contains(o);
         }
     }
 
@@ -747,27 +668,17 @@ public class THashMap<K,V> extends TObjectHash<K> implements Map<K,V> {
 
         @Override
         public final boolean equals(Object o) {
-            if (o == this) {
-                return true;
+            if (!(o instanceof Map.Entry)) {
+                return false;
             }
-            if (o instanceof Map.Entry) {
-                Map.Entry<?, ?> otherEntry = (Map.Entry<?, ?>) o;
-                Object otherKey = otherEntry.getKey();
-                Object otherValue = otherEntry.getValue();
-                //noinspection unchecked
-                if (!(key == otherKey || key != null && _hashingStrategy.equals(key, (K) otherKey))) {
-                    return false;
-                }
-                return val == otherValue || (val != null && val.equals(otherValue));
-            }
-            return false;
+            Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
+            return (key == null ? e.getKey() == null : key.equals(e.getKey())) &&
+                    (val == null ? e.getValue() == null : val.equals(e.getValue()));
         }
 
         @Override
         public final int hashCode() {
-            HashProcedure hashProcedure = new HashProcedure();
-            hashProcedure.execute(key, val);
-            return hashProcedure.getHashCode();
+            return (key == null ? 0 : key.hashCode()) ^ (val == null ? 0 : val.hashCode());
         }
     }
 
