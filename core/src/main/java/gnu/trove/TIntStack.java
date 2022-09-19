@@ -15,112 +15,106 @@
 // License along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ///////////////////////////////////////////////////////////////////////////////
-
-
 package gnu.trove;
 
 /**
- * A stack of int primitives, backed by a TIntArrayList.
- *
- * Created: Tue Jan  1 10:30:35 2002
- *
- * @author Eric D. Friedman
- * @version $Id: TIntStack.java,v 1.5 2004/09/24 09:11:15 cdr Exp $
+ * @deprecated Use {@link it.unimi.dsi.fastutil.ints.IntArrayList}
  */
+@Deprecated
+public final class TIntStack {
 
-public class TIntStack {
+  /**
+   * the list used to hold the stack values.
+   */
+  private TIntArrayList _list;
 
-    /** the list used to hold the stack values. */
-    protected TIntArrayList _list;
+  public static final int DEFAULT_CAPACITY = TIntArrayList.DEFAULT_CAPACITY;
 
-    public static final int DEFAULT_CAPACITY = TIntArrayList.DEFAULT_CAPACITY;
+  /**
+   * Creates a new <code>TIntStack</code> instance with the default
+   * capacity.
+   */
+  public TIntStack() {
+    this(DEFAULT_CAPACITY);
+  }
 
-    /**
-     * Creates a new <code>TIntStack</code> instance with the default
-     * capacity.
-     */
-    public TIntStack() {
-        this(DEFAULT_CAPACITY);
-    }
-
-    /**
+  /**
    * Copy constructor.
-   * @param copy
    */
   public TIntStack(TIntStack copy) {
     _list = new TIntArrayList(copy._list.toNativeArray());
   }
 
   /**
-     * Creates a new <code>TIntStack</code> instance with the
-     * specified capacity.
-     *
-     * @param capacity the initial depth of the stack
-     */
-    public TIntStack(int capacity) {
-        _list = new TIntArrayList(capacity);
-    }
+   * Creates a new <code>TIntStack</code> instance with the
+   * specified capacity.
+   *
+   * @param capacity the initial depth of the stack
+   */
+  public TIntStack(int capacity) {
+    _list = new TIntArrayList(capacity);
+  }
 
-    /**
-     * Pushes the value onto the top of the stack.
-     *
-     * @param val an <code>int</code> value
-     */
-    public void push(int val) {
-        _list.add(val);
-    }
+  /**
+   * Pushes the value onto the top of the stack.
+   *
+   * @param val an <code>int</code> value
+   */
+  public void push(int val) {
+    _list.add(val);
+  }
 
-    /**
-     * Removes and returns the value at the top of the stack.
-     *
-     * @return an <code>int</code> value
-     */
-    public int pop() {
-        return _list.remove(_list.size() - 1);
-    }
+  /**
+   * Removes and returns the value at the top of the stack.
+   *
+   * @return an <code>int</code> value
+   */
+  public int pop() {
+    return _list.remove(_list.size() - 1);
+  }
 
-    /**
-     * Returns the value at the top of the stack.
-     *
-     * @return an <code>int</code> value
-     */
-    public int peek() {
-        return _list.get(_list.size() - 1);
-    }
+  /**
+   * Returns the value at the top of the stack.
+   *
+   * @return an <code>int</code> value
+   */
+  public int peek() {
+    return _list.get(_list.size() - 1);
+  }
 
-    /**
-     * Returns the current depth of the stack.
-     *
-     * @return an <code>int</code> value
-     */
-    public int size() {
-        return _list.size();
-    }
+  /**
+   * Returns the current depth of the stack.
+   *
+   * @return an <code>int</code> value
+   */
+  public int size() {
+    return _list.size();
+  }
 
-    /**
-     * Clears the stack, reseting its capacity to the default.
-     */
-    public void clear() {
-        _list.clear(DEFAULT_CAPACITY);
-    }
+  /**
+   * Clears the stack, reseting its capacity to the default.
+   */
+  public void clear() {
+    _list.clear(DEFAULT_CAPACITY);
+  }
 
-    /**
-     * Clears the stack without releasing its internal capacity allocation.
-     */
-    public void reset() {
-        _list.reset();
-    }
+  /**
+   * Clears the stack without releasing its internal capacity allocation.
+   */
+  public void reset() {
+    _list.reset();
+  }
 
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TIntStack)) return false;
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof TIntStack)) return false;
 
-        final TIntStack tIntStack = (TIntStack) o;
+    final TIntStack tIntStack = (TIntStack)o;
 
-        return _list.equals(tIntStack._list);
-    }
+    return _list.equals(tIntStack._list);
+  }
 
-    public int hashCode() {
-        return _list.hashCode();
-    }
+  public int hashCode() {
+    return _list.hashCode();
+  }
 } // TIntStack

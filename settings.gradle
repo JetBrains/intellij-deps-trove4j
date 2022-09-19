@@ -1,1 +1,1 @@
-include 'generator', 'core', 'benchmark'
+include 'core'

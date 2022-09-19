@@ -20,8 +20,8 @@
 package gnu.trove;
 
 /**
- * Interface for procedures with one Object paramater.
- *
+ * Interface for procedures with one Object parameter.
+ * <p>
  * Created: Mon Nov  5 21:45:49 2001
  *
  * @author Eric D. Friedman
@@ -29,14 +29,14 @@ package gnu.trove;
  */
 
 public interface TObjectProcedure<T> {
-    /**
-     * Executes this procedure. A false return value indicates that
-     * the application executing this procedure should not invoke this
-     * procedure again.
-     *
-     * @param object an <code>Object</code> value
-     * @return true if additional invocations of the procedure are
-     * allowed.
-     */
-    boolean execute(T object);
+  /**
+   * Executes this procedure. A false return value indicates that
+   * the application executing this procedure should not invoke this
+   * procedure again.
+   *
+   * @param object an <code>Object</code> value
+   * @return true if additional invocations of the procedure are
+   * allowed.
+   */
+  boolean execute(T object);
 }// TObjectProcedure

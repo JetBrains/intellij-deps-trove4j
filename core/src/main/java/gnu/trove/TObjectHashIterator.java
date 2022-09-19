@@ -20,24 +20,22 @@
 package gnu.trove;
 
 /**
- *
  * Created: Wed Nov 28 21:30:53 2001
  *
  * @author Eric D. Friedman
  * @version $Id: TObjectHashIterator.java,v 1.8 2004/09/24 09:11:15 cdr Exp $
  */
 
-class TObjectHashIterator<E> extends THashIterator<E>  {
-    protected final TObjectHash<E> _objectHash;
+final class TObjectHashIterator<E> extends THashIterator<E> {
+  private final TObjectHash<E> _objectHash;
 
-    public TObjectHashIterator(TObjectHash<E> hash) {
-        super(hash);
-        _objectHash = hash;
-    }
+  TObjectHashIterator(TObjectHash<E> hash) {
+    super(hash);
+    _objectHash = hash;
+  }
 
-    @Override
-    protected E objectAtIndex(int index) {
-        return (E)_objectHash._set[index];
-    }
-    
+  @Override
+  protected E objectAtIndex(int index) {
+    return (E)_objectHash._set[index];
+  }
 } // TObjectHashIterator

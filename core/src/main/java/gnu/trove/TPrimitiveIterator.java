@@ -39,38 +39,38 @@ import java.util.ConcurrentModificationException;
  *
  * <p>You may, of course, use the hasNext(), next() idiom too if
  * you aren't in a performance critical spot.</p>
- *
  */
 abstract class TPrimitiveIterator extends TIterator {
-    /** the collection on which this iterator operates. */
-    protected final TPrimitiveHash _hash;
+  /**
+   * the collection on which this iterator operates.
+   */
+  protected final TPrimitiveHash _hash;
 
-    /**
-     * Creates a TPrimitiveIterator for the specified collection.
-     */
-    public TPrimitiveIterator(TPrimitiveHash hash) {
-	super(hash);
-        _hash = hash;
-    }
-    
-    /**
-     * Returns the index of the next value in the data structure
-     * or a negative value if the iterator is exhausted.
-     *
-     * @return an <code>int</code> value
-     * @exception ConcurrentModificationException if the underlying collection's
-     * size has been modified since the iterator was created.
-     */
-    @Override
-    protected final int nextIndex() {
-        if (_expectedSize != _hash.size()) {
-            throw new ConcurrentModificationException();
-        }
+  /**
+   * Creates a TPrimitiveIterator for the specified collection.
+   */
+  TPrimitiveIterator(TPrimitiveHash hash) {
+    super(hash);
+    _hash = hash;
+  }
 
-        byte[] states = _hash._states;
-        int i = _index;
-        while (i-- > 0 && (states[i] != TPrimitiveHash.FULL)) ;
-        return i;
+  /**
+   * Returns the index of the next value in the data structure
+   * or a negative value if the iterator is exhausted.
+   *
+   * @return an <code>int</code> value
+   * @throws ConcurrentModificationException if the underlying collection's
+   *                                         size has been modified since the iterator was created.
+   */
+  @Override
+  protected final int nextIndex() {
+    if (_expectedSize != _hash.size()) {
+      throw new ConcurrentModificationException();
     }
 
+    byte[] states = _hash._states;
+    int i = _index;
+    while (i-- > 0 && (states[i] != TPrimitiveHash.FULL)) ;
+    return i;
+  }
 } // TPrimitiveIterator

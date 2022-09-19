@@ -1,7 +1,3 @@
-plugins {
-    id "com.jfrog.bintray" version "1.8.4"
-}
-
 apply plugin: 'maven-publish'
 
 ext.projectVersion = projectVersion
@@ -10,24 +6,14 @@ jar {
     baseName 'trove4j'
 }
 
-task(generateTemplates, type: JavaExec, dependsOn: ':generator:compileJava') {
-    main = 'gnu.trove.generate.Generate'
-    classpath = findProject(':generator').sourceSets.main.runtimeClasspath
-    args = [ 'src/main/templates', "${buildDir}/generated-src" ]
-    workingDir = getProjectDir()
-}
-
 sourceSets {
     main {
         java.srcDirs += "${buildDir}/generated-src/src"
     }
 }
 
-compileJava.dependsOn(generateTemplates)
-
-
-sourceCompatibility = '1.5'
-targetCompatibility = '1.5'
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
 
 task sourceJar(type: Jar) {
     from sourceSets.main.java
@@ -90,23 +76,4 @@ publishing {
 
         }
     }
-}
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-
-    publish = true
-    
-    pkg {
-        repo = 'intellij-third-party-dependencies'
-        name = 'trove4j'
-        userOrg = 'jetbrains'
-
-        version {
-            name = rootProject.ext.projectVersion
-        }
-    }
-
-    publications = ['MyPublication']
 }
