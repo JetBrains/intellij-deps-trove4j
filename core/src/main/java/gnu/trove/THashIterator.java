@@ -41,61 +41,61 @@ import java.util.NoSuchElementException;
  *
  * <p>You may, of course, use the hasNext(), next() idiom too if
  * you aren't in a performance critical spot.</p>
- *
  */
 abstract class THashIterator<V> extends TIterator implements Iterator<V> {
-    protected final TObjectHash _hash;
+  protected final TObjectHash _hash;
 
-    /**
-     * Create an instance of THashIterator over the values of the TObjectHash
-     */
-    public THashIterator(TObjectHash hash) {
-        super(hash);
-        _hash = hash;
-    }
-    
-    /**
-     * Moves the iterator to the next Object and returns it.
-     *
-     * @return an <code>Object</code> value
-     * @exception ConcurrentModificationException if the structure
-     * was changed using a method that isn't on this iterator.
-     * @exception NoSuchElementException if this is called on an
-     * exhausted iterator.
-     */
-    public V next() {
-        moveToNextIndex();
-        return objectAtIndex(_index);
-    }
+  /**
+   * Create an instance of THashIterator over the values of the TObjectHash
+   */
+  THashIterator(TObjectHash hash) {
+    super(hash);
+    _hash = hash;
+  }
 
-    /**
-     * Returns the index of the next value in the data structure
-     * or a negative value if the iterator is exhausted.
-     *
-     * @return an <code>int</code> value
-     * @exception ConcurrentModificationException if the underlying
-     * collection's size has been modified since the iterator was
-     * created.
-     */
-    @Override
-    protected final int nextIndex() {
-        if (_expectedSize != _hash.size()) {
-            throw new ConcurrentModificationException();
-        }
+  /**
+   * Moves the iterator to the next Object and returns it.
+   *
+   * @return an <code>Object</code> value
+   * @throws ConcurrentModificationException if the structure
+   *                                         was changed using a method that isn't on this iterator.
+   * @throws NoSuchElementException          if this is called on an
+   *                                         exhausted iterator.
+   */
+  @Override
+  public V next() {
+    moveToNextIndex();
+    return objectAtIndex(_index);
+  }
 
-        Object[] set = _hash._set;
-        int i = _index;
-        while (i-- > 0 && (set[i] == null || set[i] == TObjectHash.REMOVED)) ;
-        return i;
+  /**
+   * Returns the index of the next value in the data structure
+   * or a negative value if the iterator is exhausted.
+   *
+   * @return an <code>int</code> value
+   * @throws ConcurrentModificationException if the underlying
+   *                                         collection's size has been modified since the iterator was
+   *                                         created.
+   */
+  @Override
+  protected final int nextIndex() {
+    if (_expectedSize != _hash.size()) {
+      throw new ConcurrentModificationException();
     }
 
-    /**
-     * Returns the object at the specified index.  Subclasses should
-     * implement this to return the appropriate object for the given
-     * index.
-     *
-     * @param index the index of the value to return.
-     * @return an <code>Object</code> value
-     */
-    protected abstract V objectAtIndex(int index);
+    Object[] set = _hash._set;
+    int i = _index;
+    while (i-- > 0 && (set[i] == null || set[i] == TObjectHash.REMOVED)) ;
+    return i;
+  }
+
+  /**
+   * Returns the object at the specified index.  Subclasses should
+   * implement this to return the appropriate object for the given
+   * index.
+   *
+   * @param index the index of the value to return.
+   * @return an <code>Object</code> value
+   */
+  protected abstract V objectAtIndex(int index);
 } // THashIterator

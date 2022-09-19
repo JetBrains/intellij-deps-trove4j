@@ -1,0 +1,7 @@
+.gradle
+build/
+.idea/compiler.xml
+.idea/misc.xml
+.idea/workspace.xml
+.idea/gradle.xml
+.idea/inspectionProfiles/
