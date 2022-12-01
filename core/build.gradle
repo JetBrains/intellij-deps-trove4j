@@ -47,7 +47,7 @@ publishing {
             }
             pom.withXml {
                 asNode().children().last() + {
-                    resolveStrategy = DELEGATE_FIRST
+                    resolveStrategy = Closure.DELEGATE_FIRST
                     name 'Trove4J'
                     description 'Fork of trove4j library used in IntelliJ Platform.'
                     url 'https://github.com/JetBrains/intellij-deps-trove4j'
